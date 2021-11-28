@@ -1,0 +1,60 @@
+//code for google signUp using email and password
+Future signUpWithEmailAndPassword(String email, String password) async {
+try {
+UserCredential userCredential = await _auth
+.createUserWithEmailAndPassword(email: email, password: password);
+User user = userCredential.user;
+return _usercheck(user);
+} on FirebaseAuthException catch (e) {
+if (e.code == ‘weak-password’) {
+print(‘The password provided is too weak.’);
+return 0;
+}
+ else if (e.code == ‘email-already-in-use’) {
+print(‘The account already exists for that email.’);return 1;
+}
+} catch (e) {
+print(e.toString());
+}
+}
+
+
+//Code for Google Signin using email and password
+User1 _usercheck(User user) {
+if (user != null) {
+return User1(userId: user.uid);
+} else {
+return null;
+}
+}
+Future signinWithEmailAndPassword(String email, String password) async {
+try {
+UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+email: email, password: password);
+User user = userCredential.user;
+return _usercheck(user);
+} on FirebaseAuthException catch (e) {
+if (e.code == ‘user-not-found’) {
+print(‘No user found for that email.’);
+return 0;
+} else if (e.code == ‘wrong-password’) {
+print(‘Wrong password provided for that user.’);
+return 1;
+}
+}
+}
+
+
+//Sign Out Function
+Future signOut() async {
+try {
+BotToast.showText(
+text: “logged out Successfully”,
+);
+HelperFunction.saveuserLoggedInSharedPreference(false);
+return await _auth.signOut();
+} catch (e) {
+print(e.toString());
+}
+}
+}
